@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   Design tokens
+   Light and dark are tuned separately (not an inversion): dark uses lifted
+   surfaces instead of shadows and a lighter, less saturated accent.
+   ========================================================================== */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --canvas: #f6f6f4;          /* app background */
+  --surface: #ffffff;         /* panels, tables */
+  --surface-sunken: #f1f1ee;  /* table headers, inset areas, hover rows */
+  --raised: #ffffff;          /* menus, dialogs, toasts */
+
+  /* Text */
+  --fg: #191b1a;
+  --fg-secondary: #4a4e4c;
+  --fg-muted: #6e7370;
+  --fg-disabled: #a4a8a5;
+
+  /* Lines */
+  --line: #e3e4e0;
+  --line-strong: #cdcfca;
+
+  /* Accent – evergreen */
+  --accent: #1d5e4a;
+  --accent-hover: #164b3b;
+  --accent-fg: #ffffff;
+  --accent-soft: #e7efeb;
+  --accent-text: #1a5a46;
+
+  /* Status */
+  --success: #23764a;
+  --success-soft: #e6f2ea;
+  --warning: #8f5400;
+  --warning-soft: #f8efe0;
+  --danger: #b3261e;
+  --danger-hover: #971f19;
+  --danger-soft: #f9e9e7;
+  --info: #2c5b97;
+  --info-soft: #e8eef7;
+
+  /* Data viz (validated pair, see charts) */
+  --series-1: #15805d;
+  --series-2: #c8741a;
+  --grid: #ebebe8;
+
+  /* Loading */
+  --skeleton: #ecece9;
+  --skeleton-shine: rgba(255, 255, 255, 0.65);
+
+  --focus: #1d5e4a;
+  --elev-shadow: 0 1px 2px rgba(20, 22, 21, 0.06), 0 8px 24px -6px rgba(20, 22, 21, 0.14);
+  --overlay: rgba(20, 22, 21, 0.42);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --canvas: #0f1110;
+  --surface: #161918;
+  --surface-sunken: #1b1f1d;
+  --raised: #1f2321;
+
+  --fg: #e8eae8;
+  --fg-secondary: #b7bcb9;
+  --fg-muted: #8a908c;
+  --fg-disabled: #5b605d;
+
+  --line: #262a28;
+  --line-strong: #353a37;
+
+  --accent: #5fb592;
+  --accent-hover: #78c5a5;
+  --accent-fg: #0c1410;
+  --accent-soft: #18271f;
+  --accent-text: #7cc9a9;
+
+  --success: #62bd85;
+  --success-soft: #16261c;
+  --warning: #deaa55;
+  --warning-soft: #2a2114;
+  --danger: #ef7a70;
+  --danger-hover: #f4958d;
+  --danger-soft: #2c1816;
+  --info: #86aee3;
+  --info-soft: #172131;
+
+  --series-1: #2a9670;
+  --series-2: #c27522;
+  --grid: #222624;
+
+  --skeleton: #1f2321;
+  --skeleton-shine: rgba(255, 255, 255, 0.045);
+
+  --focus: #78c5a5;
+  --elev-shadow: 0 0 0 1px #2c312e, 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sunken: var(--surface-sunken);
+  --color-raised: var(--raised);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-secondary);
+  --color-fg-3: var(--fg-muted);
+  --color-fg-disabled: var(--fg-disabled);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale (UI base 14px) */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+  --text-md: 0.9375rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.5rem;
+  --text-xl: 1.3125rem;
+  --text-xl--line-height: 1.75rem;
+  --text-metric: 1.625rem;
+  --text-metric--line-height: 2rem;
+
+  --shadow-raised: var(--elev-shadow);
+
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+  --animate-fade-in: fade-in 140ms ease-out;
+  --animate-pop-in: pop-in 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-slide-up: slide-up 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: translateY(4px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/* Square geometry throughout – no rounded corners. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* All figures align in columns */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--fg);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+}
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ==========================================================================
+   Skeleton shimmer – one implementation used by every loading state
+   ========================================================================== */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--skeleton);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0%, var(--skeleton-shine) 50%, transparent 100%);
+  animation: var(--animate-shimmer);
+}
+
+/* Thin indeterminate bar shown on a region that is refreshing in place */
+.refresh-bar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  overflow: hidden;
+  background: var(--accent-soft);
+}
+.refresh-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: var(--accent);
+  animation: var(--animate-shimmer);
+  animation-duration: 1.2s;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Recharts focus outline on SVG wrapper is noise */
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .skeleton::after,
+  .refresh-bar::after {
+    animation: none;
+    display: none;
+  }
+}
