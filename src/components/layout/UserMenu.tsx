@@ -32,6 +32,8 @@ export function UserMenu({ variant }: { variant: "sidebar" | "compact" }) {
       items={items}
       label="Account"
       align="start"
+      // Pinned to the bottom of the sidebar, so the list always opens upward.
+      side="top"
       className="w-full [&>button]:w-full"
       trigger={() => (
         <span className="flex w-full items-center gap-2.5 px-2 py-2 text-left hover:bg-sunken">

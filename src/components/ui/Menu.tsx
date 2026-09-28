@@ -1,7 +1,7 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "@/utils/cx";
 
 export interface MenuItem {
@@ -22,12 +22,15 @@ export function Menu({
   label = "More actions",
   trigger,
   align = "end",
+  side = "auto",
   className,
 }: {
   items: MenuItem[];
   label?: string;
   trigger?: (props: { open: boolean }) => ReactNode;
   align?: "start" | "end";
+  /** Where the list opens. "auto" opens below unless there isn't room, then above. */
+  side?: "auto" | "top" | "bottom";
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -35,6 +38,24 @@ export function Menu({
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const listRef = useRef<HTMLDivElement>(null);
+  const [openUp, setOpenUp] = useState(side === "top");
+
+  // Measure before paint so the list never flashes off-screen: open upward when it
+  // wouldn't fit below the trigger (e.g. the account menu at the bottom of the sidebar).
+  useLayoutEffect(() => {
+    if (!open || side !== "auto") {
+      setOpenUp(side === "top");
+      return;
+    }
+    const trigger = rootRef.current?.getBoundingClientRect();
+    const list = listRef.current;
+    if (!trigger || !list) return;
+    const needed = list.offsetHeight + 8;
+    const below = window.innerHeight - trigger.bottom;
+    const above = trigger.top;
+    setOpenUp(below < needed && above > below);
+  }, [open, side]);
   const menuId = useId();
   const enabled = items.map((it, i) => (it.disabled ? -1 : i)).filter((i) => i >= 0);
 
@@ -114,12 +135,14 @@ export function Menu({
       </button>
       {open && (
         <div
+          ref={listRef}
           id={menuId}
           role="menu"
           aria-label={label}
           onKeyDown={onMenuKey}
           className={cx(
-            "absolute top-full z-40 mt-1 min-w-44 animate-pop-in border border-line bg-raised py-1 shadow-raised",
+            "absolute z-40 min-w-44 animate-pop-in border border-line bg-raised py-1 shadow-raised",
+            openUp ? "bottom-full mb-1" : "top-full mt-1",
             align === "end" ? "right-0" : "left-0",
           )}
         >

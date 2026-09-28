@@ -148,7 +148,8 @@ function SalaryPromptDialog({
           ? "Your salary for this month is already recorded. Add another payment only if you received more."
           : "It'll be added to your bank balance. You can change it later on the Money page."
       }
-      size="sm"
+      // "md": the footer holds three buttons that don't fit the small width on desktop.
+      size="md"
       dismissible={!busy}
     >
       <form onSubmit={submit} noValidate className="flex flex-col gap-4">
