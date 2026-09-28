@@ -1,11 +1,15 @@
 "use client";
 
-import { ChevronDown, Search, X } from "lucide-react";
+import { ChevronDown, Eye, EyeOff, Search, X } from "lucide-react";
 import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useEffect,
   useId,
+  useImperativeHandle,
+  useRef,
+  useState,
   type InputHTMLAttributes,
   type ReactElement,
   type ReactNode,
@@ -61,6 +65,68 @@ export function Field({ label, optional, hint, error, className, children }: Fie
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { inputSize?: "sm" | "md" }>(
   function Input({ className, inputSize = "md", ...rest }, ref) {
     return <input ref={ref} {...rest} className={cx(control, inputSize === "sm" ? "h-8 px-2.5 text-sm" : "h-9 px-3", className)} />;
+  },
+);
+
+/**
+ * Password field with a show/hide toggle. Works inside <Field> like <Input>: the id and
+ * aria attributes Field passes land on the input itself. The text is hidden again when
+ * the form is submitted, so browsers still recognise it as a password to save.
+ */
+export const PasswordInput = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, "type">>(
+  function PasswordInput({ className, disabled, ...rest }, ref) {
+    const [visible, setVisible] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+
+    useEffect(() => {
+      const form = inputRef.current?.form;
+      if (!form) return;
+      const hide = () => setVisible(false);
+      form.addEventListener("submit", hide);
+      return () => form.removeEventListener("submit", hide);
+    }, []);
+
+    function toggle() {
+      const input = inputRef.current;
+      const caret = input ? [input.selectionStart, input.selectionEnd] : null;
+      setVisible((v) => !v);
+      // Keep typing where the user was; changing `type` can reset the caret in some browsers.
+      requestAnimationFrame(() => {
+        if (!input) return;
+        input.focus();
+        if (caret && caret[0] != null) input.setSelectionRange(caret[0], caret[1]);
+      });
+    }
+
+    return (
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type={visible ? "text" : "password"}
+          disabled={disabled}
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          {...rest}
+          // Hide Edge's built-in reveal button so there's only one.
+          className={cx(control, "h-9 pr-10 pl-3 [&::-ms-reveal]:hidden", className)}
+        />
+        <button
+          type="button"
+          onClick={toggle}
+          // Don't steal focus from the input on click.
+          onMouseDown={(e) => e.preventDefault()}
+          disabled={disabled}
+          aria-label={visible ? "Hide password" : "Show password"}
+          aria-pressed={visible}
+          title={visible ? "Hide password" : "Show password"}
+          className="absolute inset-y-0 right-0 flex w-9 cursor-pointer items-center justify-center text-fg-3 transition-colors duration-100 hover:text-fg focus-visible:text-fg disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {visible ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
+        </button>
+      </div>
+    );
   },
 );
 

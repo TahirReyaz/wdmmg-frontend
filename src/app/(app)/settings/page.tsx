@@ -8,7 +8,7 @@ import { AvatarSetting } from "@/components/settings/AvatarSetting";
 import { DesktopAlertsSetting } from "@/components/settings/DesktopAlertsSetting";
 import { SalarySetting } from "@/components/settings/SalarySetting";
 import { Button } from "@/components/ui/Button";
-import { Field, Input } from "@/components/ui/Field";
+import { Field, Input, PasswordInput } from "@/components/ui/Field";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { FormError } from "@/components/ui/States";
@@ -112,13 +112,13 @@ function PasswordForm() {
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <FormError message={serverError} />
       <Field label="Current password" error={submitted ? errors.current : undefined}>
-        <Input type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} />
+        <PasswordInput autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} />
       </Field>
       <Field label="New password" hint="At least 8 characters." error={submitted ? errors.next : undefined}>
-        <Input type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} />
+        <PasswordInput autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} />
       </Field>
       <Field label="Confirm new password" error={submitted ? errors.confirm : undefined}>
-        <Input type="password" autoComplete="new-password" value={confirmValue} onChange={(e) => setConfirmValue(e.target.value)} />
+        <PasswordInput autoComplete="new-password" value={confirmValue} onChange={(e) => setConfirmValue(e.target.value)} />
       </Field>
       <div>
         <Button type="submit" loading={change.isPending} loadingText="Updating…">

@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { ApiError, errorMessage } from "@/api/client";
 import { AuthForm } from "@/components/layout/AuthForm";
 import { Button } from "@/components/ui/Button";
-import { Field, Input } from "@/components/ui/Field";
+import { Field, Input, PasswordInput } from "@/components/ui/Field";
 import { FormError } from "@/components/ui/States";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -73,7 +73,7 @@ export default function LoginPage() {
           <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
         </Field>
         <Field label="Password" error={submitted ? errors.password : undefined}>
-          <Input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <PasswordInput autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
         <Button type="submit" variant="primary" className="mt-1 w-full" loading={busy} loadingText="Signing in…">
           Sign in

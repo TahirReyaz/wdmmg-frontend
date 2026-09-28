@@ -6,7 +6,7 @@ import { useState, type FormEvent } from "react";
 import { ApiError, errorMessage } from "@/api/client";
 import { AuthForm } from "@/components/layout/AuthForm";
 import { Button } from "@/components/ui/Button";
-import { Field, Input } from "@/components/ui/Field";
+import { Field, Input, PasswordInput } from "@/components/ui/Field";
 import { FormError } from "@/components/ui/States";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -68,7 +68,7 @@ export default function RegisterPage() {
           <Input type="email" autoComplete="email" value={form.email} onChange={set("email")} />
         </Field>
         <Field label="Password" hint="At least 8 characters." error={show("password")}>
-          <Input type="password" autoComplete="new-password" value={form.password} onChange={set("password")} />
+          <PasswordInput autoComplete="new-password" value={form.password} onChange={set("password")} />
         </Field>
         <Button type="submit" variant="primary" className="mt-1 w-full" loading={busy} loadingText="Creating account…">
           Create account
