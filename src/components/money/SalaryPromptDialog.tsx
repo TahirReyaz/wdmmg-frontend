@@ -160,7 +160,7 @@ function SalaryPromptDialog({
         <Field label="Credited on" error={submitted ? errors.date : undefined}>
           <Input type="date" value={date} max={todayISO()} onChange={(e) => setDate(e.target.value)} />
         </Field>
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:items-center">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex flex-col-reverse gap-2 border-t border-line bg-raised px-5 pt-4 pb-5 sm:flex-row sm:items-center">
           {!alreadyLogged && (
             <Button variant="ghost" onClick={notThisMonth} disabled={busy} className="sm:mr-auto">
               No salary this month

@@ -270,6 +270,30 @@ input[type="number"] {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/*
+ * Phones: iOS Safari zooms the whole page in when a form field with text under 16px gets
+ * focus, which leaves dialogs wider/taller than the screen. Touch devices get 16px fields.
+ * Also stop iOS date pickers from forcing their own (wider) intrinsic width.
+ */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+input[type="date"],
+input[type="month"],
+input[type="time"] {
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="date"]::-webkit-date-and-time-value,
+input[type="month"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 /* Recharts focus outline on SVG wrapper is noise */
 .recharts-wrapper:focus,
 .recharts-surface:focus {

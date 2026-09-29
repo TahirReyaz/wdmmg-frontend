@@ -85,7 +85,7 @@ export function GoalDialog({ open, onClose, goal }: { open: boolean; onClose: ()
         <Field label="Target date" optional error={submitted ? errors.date : undefined} hint={plan ?? "When you'd like to have the full amount."}>
           <Input type="date" value={date} min={todayISO()} onChange={(e) => setDate(e.target.value)} />
         </Field>
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
           <Button onClick={onClose} disabled={save.isPending}>
             Cancel
           </Button>

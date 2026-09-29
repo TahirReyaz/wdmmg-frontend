@@ -30,7 +30,7 @@ export function SegmentedControl<T extends string>({
             aria-checked={active}
             onClick={() => onChange(o.value)}
             className={cx(
-              "cursor-pointer px-3 transition-colors duration-100",
+              "min-w-0 flex-1 cursor-pointer px-2 whitespace-nowrap transition-colors duration-100 sm:flex-none sm:px-3",
               size === "sm" ? "h-7 text-sm" : "h-8 text-base",
               active ? "bg-surface font-medium text-fg shadow-[0_0_0_1px_var(--line)]" : "text-fg-3 hover:text-fg",
             )}

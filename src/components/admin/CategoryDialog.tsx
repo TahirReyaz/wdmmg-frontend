@@ -57,7 +57,7 @@ export function CategoryDialog({ open, onClose, category, nextOrder }: { open: b
         <Field label="Name" error={nameError}>
           <Input value={name} maxLength={60} placeholder="e.g. Pets" onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} />
         </Field>
-        <fieldset>
+        <fieldset className="min-w-0">
           <legend className="mb-1.5 text-sm font-medium text-fg-2">Colour</legend>
           <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Preset colours">
             {CATEGORY_COLORS.map((c) => (
@@ -79,7 +79,7 @@ export function CategoryDialog({ open, onClose, category, nextOrder }: { open: b
           </div>
           {colorError && <p className="mt-1.5 text-sm text-danger">{colorError}</p>}
         </fieldset>
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
           <Button onClick={onClose} disabled={save.isPending}>
             Cancel
           </Button>

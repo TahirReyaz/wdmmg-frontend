@@ -66,7 +66,7 @@ export function GroupFormDialog({
         <Field label="Description" optional>
           <Textarea rows={2} maxLength={500} value={description} placeholder="What is this group for?" onChange={(e) => setDescription(e.target.value)} />
         </Field>
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
           <Button onClick={onClose} disabled={saving}>
             Cancel
           </Button>

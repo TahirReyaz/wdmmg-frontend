@@ -157,7 +157,7 @@ export function RecurringDialog({ open, onClose, item }: { open: boolean; onClos
           </Field>
         </div>
 
-        <fieldset className="border-t border-line pt-4">
+        <fieldset className="min-w-0 border-t border-line pt-4">
           <legend className="sr-only">Schedule</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="Repeats">
@@ -196,7 +196,7 @@ export function RecurringDialog({ open, onClose, item }: { open: boolean; onClos
           <Textarea rows={2} maxLength={1000} value={v.notes} onChange={(e) => set("notes", e.target.value)} />
         </Field>
 
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
           <Button onClick={onClose} disabled={save.isPending}>
             Cancel
           </Button>

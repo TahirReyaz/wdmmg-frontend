@@ -148,7 +148,7 @@ export function ExpenseForm({
       <Field label="Notes" optional>
         <Textarea rows={2} maxLength={1000} value={values.notes} placeholder="Anything worth remembering" onChange={(e) => set("notes", e.target.value)} />
       </Field>
-      <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+      <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
         <Button onClick={onCancel} disabled={submitting}>
           Cancel
         </Button>

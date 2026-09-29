@@ -174,10 +174,10 @@ export function GroupExpenseDialog({
           </Field>
         </div>
 
-        <fieldset>
+        <fieldset className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <legend className="text-sm font-medium text-fg-2">Split</legend>
-            <SegmentedControl label="Split method" size="sm" options={SPLITS} value={splitType} onChange={changeType} />
+            <SegmentedControl label="Split method" size="sm" options={SPLITS} value={splitType} onChange={changeType} className="w-full sm:w-auto" />
           </div>
           <ul className="divide-y divide-line border border-line">
             {members.map((m) => {
@@ -185,7 +185,7 @@ export function GroupExpenseDialog({
               if (!row) return null;
               const share = preview.get(m.id);
               return (
-                <li key={m.id} className={cx("flex h-12 items-center gap-3 px-3", !row.included && "bg-sunken/50")}>
+                <li key={m.id} className={cx("flex min-h-12 items-center gap-2 px-3 py-1.5 sm:gap-3", !row.included && "bg-sunken/50")}>
                   <input
                     type="checkbox"
                     aria-label={`Include ${who(m)}`}
@@ -193,9 +193,14 @@ export function GroupExpenseDialog({
                     onChange={(e) => updateRow(m.id, { included: e.target.checked })}
                     className="size-4 cursor-pointer accent-[var(--accent)]"
                   />
-                  <span className={cx("min-w-0 flex-1 truncate text-base", row.included ? "text-fg" : "text-fg-3")}>{who(m)}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className={cx("block truncate text-base", row.included ? "text-fg" : "text-fg-3")}>{who(m)}</span>
+                    {splitType !== "EQUAL" && row.included && share !== undefined && (
+                      <span className="tabular block text-xs text-fg-3 sm:hidden">{formatMoney(share)}</span>
+                    )}
+                  </span>
                   {splitType !== "EQUAL" && row.included && (
-                    <div className="relative w-28">
+                    <div className="relative w-24 shrink-0 sm:w-28">
                       <Input
                         inputSize="sm"
                         type="number"
@@ -212,7 +217,7 @@ export function GroupExpenseDialog({
                       </span>
                     </div>
                   )}
-                  <span className="tabular w-24 text-right text-base text-fg-2">{row.included && share !== undefined ? formatMoney(share) : "—"}</span>
+                  <span className={cx("tabular w-24 shrink-0 text-right text-base text-fg-2", splitType !== "EQUAL" && "hidden sm:block")}>{row.included && share !== undefined ? formatMoney(share) : "—"}</span>
                 </li>
               );
             })}
@@ -226,7 +231,7 @@ export function GroupExpenseDialog({
           <Textarea rows={2} maxLength={1000} value={notes} onChange={(e) => setNotes(e.target.value)} />
         </Field>
 
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
           <Button onClick={onClose} disabled={save.isPending}>
             Cancel
           </Button>

@@ -46,7 +46,7 @@ export function ConfirmOccurrenceDialog({ occurrence, onClose }: { occurrence: O
     <Dialog open={!!occurrence} onClose={onClose} title={occurrence ? `Add “${occurrence.name}”` : ""} description="Adjust this instance before adding it. The recurring schedule isn't changed." size="sm" dismissible={!resolve.isPending}>
       <form onSubmit={submit} noValidate className="flex flex-col gap-4">
         <FormError message={error} />
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2">
           <Field label="Amount" error={invalid}>
             <AmountInput prefix={currencySymbol} value={amount} onChange={(e) => setAmount(e.target.value)} data-autofocus />
           </Field>
@@ -54,7 +54,7 @@ export function ConfirmOccurrenceDialog({ occurrence, onClose }: { occurrence: O
             <Input type="date" value={date} max={todayISO()} onChange={(e) => setDate(e.target.value)} />
           </Field>
         </div>
-        <div className="-mx-5 mt-1 flex flex-col-reverse gap-2 border-t border-line px-5 pt-4 sm:flex-row sm:justify-end">
+        <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
           <Button onClick={onClose} disabled={resolve.isPending}>
             Cancel
           </Button>

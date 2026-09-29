@@ -90,14 +90,14 @@ export function Dialog({
         aria-labelledby={titleId}
         aria-describedby={description ? descId : undefined}
         className={cx(
-          "relative flex max-h-[92dvh] w-full flex-col border border-line bg-raised shadow-raised",
+          "relative flex max-h-[92vh] w-full max-w-full min-w-0 flex-col border border-line bg-raised shadow-raised supports-[height:100dvh]:max-h-[92dvh]",
           "animate-slide-up sm:animate-pop-in",
           size === "sm" && "sm:max-w-md",
           size === "md" && "sm:max-w-lg",
           size === "lg" && "sm:max-w-2xl",
         )}
       >
-        <header className="flex items-start justify-between gap-4 px-5 pt-5 pb-1">
+        <header className="flex shrink-0 items-start justify-between gap-4 px-5 pt-5 pb-1">
           <div className="min-w-0">
             <h2 id={titleId} className="text-lg font-semibold text-fg">
               {title}
@@ -119,9 +119,9 @@ export function Dialog({
             </button>
           )}
         </header>
-        {children && <div className="overflow-y-auto px-5 pt-4 pb-5">{children}</div>}
+        {children && <div className="min-h-0 overflow-x-hidden overflow-y-auto overscroll-contain px-5 pt-4 pb-5">{children}</div>}
         {footer && (
-          <footer className="pb-safe flex flex-col-reverse gap-2 border-t border-line bg-surface px-5 py-3.5 sm:flex-row sm:justify-end">
+          <footer className="pb-safe flex shrink-0 flex-col-reverse gap-2 border-t border-line bg-surface px-5 py-3.5 sm:flex-row sm:justify-end">
             {footer}
           </footer>
         )}
