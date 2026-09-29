@@ -213,7 +213,7 @@ export default function GroupPage() {
         groupId={id}
         members={members}
       />
-      <SettleDialog open={!!settleDraft} draft={settleDraft} onClose={() => setSettleDraft(null)} groupId={id} members={members} />
+      <SettleDialog open={!!settleDraft} draft={settleDraft} onClose={() => setSettleDraft(null)} groupId={id} groupName={g.name} members={members} />
       <GroupFormDialog
         open={renaming}
         onClose={() => setRenaming(false)}

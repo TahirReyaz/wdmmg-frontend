@@ -14,7 +14,7 @@ interface AuthContextValue {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   /** Creates the account; the user then confirms their email with a code. */
-  register: (name: string, email: string, password: string) => Promise<RegisterResponse>;
+  register: (name: string, email: string, password: string, upiId?: string | null) => Promise<RegisterResponse>;
   /** Confirms the emailed code and signs in. */
   verifyEmail: (email: string, code: string) => Promise<void>;
   logout: () => void;
@@ -69,7 +69,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => signIn(await authApi.login(email, password)), [signIn]);
 
-  const register = useCallback((name: string, email: string, password: string) => authApi.register(name, email, password), []);
+  const register = useCallback(
+    (name: string, email: string, password: string, upiId?: string | null) => authApi.register(name, email, password, upiId),
+    [],
+  );
 
   const verifyEmail = useCallback(async (email: string, code: string) => signIn(await authApi.verifyEmail(email, code)), [signIn]);
 

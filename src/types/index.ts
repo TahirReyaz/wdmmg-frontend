@@ -9,6 +9,8 @@ export interface User {
   role: Role;
   /** Relative API path to the profile picture, or null for the initials placeholder. */
   avatarUrl: string | null;
+  /** UPI ID (VPA) other group members can pay this user at, or null. */
+  upiId: string | null;
   createdAt: string;
 }
 
@@ -17,6 +19,7 @@ export interface UserSummary {
   name: string;
   email: string;
   avatarUrl: string | null;
+  upiId: string | null;
 }
 
 export interface AuthResponse {

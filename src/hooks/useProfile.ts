@@ -6,9 +6,14 @@ import { useAuth } from "@/providers/AuthProvider";
 
 export function useUpdateProfile() {
   const { setUser } = useAuth();
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => authApi.updateProfile(name),
-    onSuccess: (user) => setUser(user),
+    mutationFn: (profile: { name: string; upiId: string }) => authApi.updateProfile(profile),
+    onSuccess: (user) => {
+      setUser(user);
+      // Group member lists embed names and UPI IDs.
+      void qc.invalidateQueries({ queryKey: ["groups"] });
+    },
   });
 }
 

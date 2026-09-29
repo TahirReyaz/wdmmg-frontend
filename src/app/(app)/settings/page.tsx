@@ -15,6 +15,7 @@ import { FormError } from "@/components/ui/States";
 import { useToast } from "@/components/ui/Toast";
 import { useChangePassword, useUpdateProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/providers/AuthProvider";
+import { normalizeUpiId, upiIdError } from "@/utils/upi";
 
 /** Settings are laid out as rows: what it is on the left, the control on the right. */
 function SettingsSection({ title, description, children, id }: { title: string; description: ReactNode; children: ReactNode; id?: string }) {
@@ -41,20 +42,27 @@ function ProfileForm() {
   const { user } = useAuth();
   const update = useUpdateProfile();
   const [name, setName] = useState(user?.name ?? "");
+  const [upiId, setUpiId] = useState(user?.upiId ?? "");
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const dirty = name.trim() !== user?.name;
+  const [upiError, setUpiError] = useState<string | undefined>(undefined);
+  const dirty = name.trim() !== user?.name || normalizeUpiId(upiId) !== (user?.upiId ?? null);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    const badUpi = upiIdError(upiId);
+    setUpiError(badUpi);
     if (!name.trim()) return setError("Name can't be empty.");
     setError(null);
+    if (badUpi) return;
     try {
-      await update.mutateAsync(name.trim());
+      const updated = await update.mutateAsync({ name: name.trim(), upiId: normalizeUpiId(upiId) ?? "" });
+      setUpiId(updated.upiId ?? "");
       setSaved(true);
       window.setTimeout(() => setSaved(false), 2500);
     } catch (err) {
-      setError(errorMessage(err));
+      if (err instanceof ApiError && err.fieldErrors.upiId) setUpiError(err.fieldErrors.upiId);
+      else setError(errorMessage(err));
     }
   }
 
@@ -65,6 +73,26 @@ function ProfileForm() {
       </Field>
       <Field label="Display name" error={error}>
         <Input value={name} maxLength={100} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+      </Field>
+      <Field
+        label="UPI ID"
+        optional
+        hint="Group members settling up with you get a button (or QR code) that opens their UPI app with your ID and the amount filled in. Leave empty to turn this off."
+        error={upiError}
+      >
+        <Input
+          value={upiId}
+          maxLength={100}
+          placeholder="yourname@okhdfcbank"
+          onChange={(e) => {
+            setUpiId(e.target.value);
+            setUpiError(undefined);
+          }}
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          inputMode="email"
+        />
       </Field>
       <div className="flex items-center gap-3">
         <Button type="submit" variant="primary" disabled={!dirty} loading={update.isPending} loadingText="Saving…">
@@ -157,7 +185,7 @@ export default function SettingsPage() {
         <SettingsSection title="Profile picture" description="Shown to people in your groups next to your name.">
           <AvatarSetting />
         </SettingsSection>
-        <SettingsSection title="Profile" description="How you appear to people in your groups.">
+        <SettingsSection id="profile" title="Profile" description="How you appear to people in your groups, and where they can pay you.">
           <ProfileForm />
         </SettingsSection>
         <SettingsSection title="Password" description="Choose a strong password you don't use elsewhere.">

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/providers/AuthProvider";
+import { upiSupported } from "@/utils/upi";
 import type { GroupDetail } from "@/types";
 import { Avatar } from "../common/Avatar";
 import { Button } from "../ui/Button";
@@ -14,6 +16,7 @@ import type { SettleDraft } from "./SettleDialog";
 export function GroupBalances({ group, onSettle }: { group: GroupDetail; onSettle: (draft: SettleDraft) => void }) {
   const { user } = useAuth();
   const name = (u: { id: number; name: string }) => (u.id === user?.id ? "You" : u.name);
+  const owedToMe = group.simplifiedDebts.some((d) => d.to.id === user?.id);
 
   return (
     <div className="grid gap-6 lg:grid-cols-5">
@@ -41,6 +44,15 @@ export function GroupBalances({ group, onSettle }: { group: GroupDetail; onSettl
               </li>
             ))}
           </ul>
+        )}
+        {upiSupported && owedToMe && user && !user.upiId && (
+          <p className="border-t border-line px-5 py-3 text-sm text-fg-3">
+            Get paid faster: add your UPI ID in{" "}
+            <Link href="/settings#profile" className="font-medium text-accent-text hover:underline hover:underline-offset-4">
+              Settings
+            </Link>{" "}
+            and people settling up with you can pay straight from their UPI app.
+          </p>
         )}
       </Panel>
 

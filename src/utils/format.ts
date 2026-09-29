@@ -1,4 +1,4 @@
-const CURRENCY = process.env.NEXT_PUBLIC_CURRENCY || "INR";
+export const CURRENCY = process.env.NEXT_PUBLIC_CURRENCY || "INR";
 export const LOCALE = process.env.NEXT_PUBLIC_LOCALE || "en-IN";
 
 const money = new Intl.NumberFormat(LOCALE, { style: "currency", currency: CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 });

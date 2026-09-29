@@ -9,11 +9,12 @@ import { Button } from "@/components/ui/Button";
 import { Field, Input, PasswordInput } from "@/components/ui/Field";
 import { FormError } from "@/components/ui/States";
 import { useAuth } from "@/providers/AuthProvider";
+import { upiIdError } from "@/utils/upi";
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", upiId: "" });
   const [submitted, setSubmitted] = useState(false);
   const [serverFields, setServerFields] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,7 @@ export default function RegisterPage() {
     name: !form.name.trim() ? "Tell us what to call you." : undefined,
     email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) ? "Enter a valid email address." : undefined,
     password: form.password.length < 8 ? "Use at least 8 characters." : undefined,
+    upiId: upiIdError(form.upiId),
   };
   const show = (k: keyof typeof form) => (submitted ? errors[k] : undefined) ?? serverFields[k];
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +39,7 @@ export default function RegisterPage() {
     setBusy(true);
     setError(null);
     try {
-      const res = await register(form.name.trim(), form.email.trim(), form.password);
+      const res = await register(form.name.trim(), form.email.trim(), form.password, form.upiId.trim().toLowerCase() || null);
       router.push(`/verify-email?email=${encodeURIComponent(res.email)}&wait=${res.resendAfterSeconds}`);
     } catch (err) {
       if (err instanceof ApiError) setServerFields(err.fieldErrors);
@@ -69,6 +71,23 @@ export default function RegisterPage() {
         </Field>
         <Field label="Password" hint="At least 8 characters." error={show("password")}>
           <PasswordInput autoComplete="new-password" value={form.password} onChange={set("password")} />
+        </Field>
+        <Field
+          label="UPI ID"
+          optional
+          hint="When someone in a group settles up with you, they can pay you straight from their UPI app. Group members can see it; change it any time in Settings."
+          error={show("upiId")}
+        >
+          <Input
+            value={form.upiId}
+            onChange={set("upiId")}
+            placeholder="yourname@okhdfcbank"
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            inputMode="email"
+            maxLength={100}
+          />
         </Field>
         <Button type="submit" variant="primary" className="mt-1 w-full" loading={busy} loadingText="Creating account…">
           Create account
