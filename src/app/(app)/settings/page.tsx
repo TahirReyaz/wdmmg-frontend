@@ -56,7 +56,13 @@ function ProfileForm() {
     setError(null);
     if (badUpi) return;
     try {
-      const updated = await update.mutateAsync({ name: name.trim(), upiId: normalizeUpiId(upiId) ?? "" });
+      const wanted = normalizeUpiId(upiId);
+      const updated = await update.mutateAsync({ name: name.trim(), upiId: wanted ?? "" });
+      if ((updated.upiId ?? null) !== wanted) {
+        // An older API ignores the field and still answers 200 — don't claim it was saved.
+        setUpiError("The server didn't save your UPI ID. It may be running an older version — try again once it's updated.");
+        return;
+      }
       setUpiId(updated.upiId ?? "");
       setSaved(true);
       window.setTimeout(() => setSaved(false), 2500);
