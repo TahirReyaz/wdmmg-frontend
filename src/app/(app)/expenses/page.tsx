@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Download, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { errorMessage } from "@/api/client";
@@ -25,7 +25,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useGroupShares } from "@/hooks/useAnalytics";
 import { useActiveCategories } from "@/hooks/useCategories";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useDeleteExpense, useExpenses, usePendingExpenseIds } from "@/hooks/useExpenses";
+import { useDeleteExpense, useExpenseTotal, useExpenses, usePendingExpenseIds } from "@/hooks/useExpenses";
 import { usePendingOccurrences } from "@/hooks/useRecurring";
 import { useRangeState } from "@/hooks/useRangeState";
 import { useTags } from "@/hooks/useTags";
@@ -82,6 +82,8 @@ export default function ExpensesPage() {
   useEffect(() => setPage(0), [range, categoryId, method, tagId, q, sort]);
 
   const expenses = useExpenses(query);
+  const totals = useExpenseTotal(query);
+  const selectedTag = tagId ? tags.data?.find((t) => t.id === tagId) : undefined;
   const shares = useGroupShares(range);
   const pendingIds = usePendingExpenseIds();
   const remove = useDeleteExpense();
@@ -225,6 +227,23 @@ export default function ExpensesPage() {
         </TabPanel>
       ) : view === "personal" ? (
         <TabPanel idBase="expenses" value="personal">
+          {selectedTag && (
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border border-line bg-surface px-4 py-3" aria-live="polite">
+              <p className="flex min-w-0 flex-wrap items-center gap-x-1.5 text-base text-fg-2">
+                <TagIcon className="size-4 shrink-0" style={{ color: selectedTag.color }} aria-hidden />
+                <span className="font-medium text-fg">{selectedTag.name}</span>
+                <span>{preset === "all" ? "in total:" : `· ${presetPhrase(preset)}:`}</span>
+                <Money value={totals.data?.total ?? 0} className="font-semibold text-fg" />
+                <span className="text-fg-3">
+                  across {totals.data?.count ?? 0} {totals.data?.count === 1 ? "expense" : "expenses"}
+                  {filtered && (categoryId || method || q) ? " matching your filters" : ""}
+                </span>
+              </p>
+              <Link href={`/expenses/tags/${selectedTag.id}`} className="text-sm font-medium text-accent-text hover:underline hover:underline-offset-4">
+                See breakdown
+              </Link>
+            </div>
+          )}
           <Panel busy={expenses.isFetching && !listLoading}>
             {expenses.isError && !expenses.data ? (
               <ErrorState title="Unable to load expenses" error={expenses.error} onRetry={() => expenses.refetch()} retrying={expenses.isFetching} />
@@ -254,8 +273,13 @@ export default function ExpensesPage() {
               />
             )}
             {expenses.data && expenses.data.totalElements > 0 && (
-              <PanelFooter>
+              <PanelFooter className="flex-wrap">
                 <Pagination page={page} size={PAGE_SIZE} total={expenses.data.totalElements} onPageChange={setPage} noun="expenses" />
+                {totals.data && (
+                  <p className="text-sm text-fg-3">
+                    Total <Money value={totals.data.total} className="ml-1 font-medium text-fg" />
+                  </p>
+                )}
               </PanelFooter>
             )}
           </Panel>

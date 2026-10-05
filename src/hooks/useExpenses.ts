@@ -27,6 +27,17 @@ export function useExpenses(query: ExpenseQuery) {
   });
 }
 
+/** Count and sum across every page for the given filters (paging and sort are ignored). */
+export function useExpenseTotal(query: ExpenseQuery) {
+  const { from, to, categoryId, paymentMethod, q, tagId } = query;
+  const filters = { from, to, categoryId, paymentMethod, q, tagId };
+  return useQuery({
+    queryKey: qk.expenses.total(filters),
+    queryFn: () => expensesApi.total(filters),
+    placeholderData: keepPreviousData,
+  });
+}
+
 /** Anything derived from expenses (lists, analytics) must refresh after a write. */
 function invalidateSpend(qc: QueryClient) {
   void qc.invalidateQueries({ queryKey: qk.expenses.all });

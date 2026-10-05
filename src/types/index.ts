@@ -67,6 +67,11 @@ export interface Expense {
   updatedAt: string;
 }
 
+export interface ExpenseTotal {
+  count: number;
+  total: number;
+}
+
 export interface ExpenseInput {
   name: string;
   amount: number;

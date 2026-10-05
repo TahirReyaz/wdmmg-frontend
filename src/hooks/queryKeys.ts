@@ -15,6 +15,7 @@ export const qk = {
   expenses: {
     all: ["expenses"] as const,
     list: (q: ExpenseQuery) => ["expenses", "list", q] as const,
+    total: (q: ExpenseQuery) => ["expenses", "total", q] as const,
   },
   analytics: {
     all: ["analytics"] as const,
