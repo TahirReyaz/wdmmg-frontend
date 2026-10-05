@@ -2,7 +2,7 @@
 
 import { keepPreviousData, useMutation, useMutationState, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { expensesApi, type ExpenseQuery } from "@/api/expenses";
-import type { Category, Expense, ExpenseInput, Page } from "@/types";
+import type { Category, Expense, ExpenseInput, Page, TagRef } from "@/types";
 import { qk } from "./queryKeys";
 
 export const EXPENSE_MUTATION = {
@@ -31,6 +31,8 @@ export function useExpenses(query: ExpenseQuery) {
 function invalidateSpend(qc: QueryClient) {
   void qc.invalidateQueries({ queryKey: qk.expenses.all });
   void qc.invalidateQueries({ queryKey: qk.analytics.all });
+  // Tag totals are sums of tagged expenses.
+  void qc.invalidateQueries({ queryKey: qk.tags.all });
   // Spending moves the bank balance.
   void qc.invalidateQueries({ queryKey: qk.money.all });
 }
@@ -60,14 +62,14 @@ export function useUpdateExpense() {
   const qc = useQueryClient();
   return useMutation({
     mutationKey: EXPENSE_MUTATION.update,
-    mutationFn: ({ id, input }: { id: number; input: ExpenseInput; category?: Category }) => expensesApi.update(id, input),
-    onMutate: async ({ id, input, category }) => {
+    mutationFn: ({ id, input }: { id: number; input: ExpenseInput; category?: Category; tag?: TagRef | null }) => expensesApi.update(id, input),
+    onMutate: async ({ id, input, category, tag }) => {
       await qc.cancelQueries({ queryKey: ["expenses", "list"] });
       const snapshot = patchLists(qc, (page) => ({
         ...page,
         content: page.content.map((e) =>
           e.id === id
-            ? { ...e, name: input.name, amount: input.amount, date: input.date, paymentMethod: input.paymentMethod, notes: input.notes ?? null, category: category ?? e.category }
+            ? { ...e, name: input.name, amount: input.amount, date: input.date, paymentMethod: input.paymentMethod, notes: input.notes ?? null, category: category ?? e.category, tag: tag === undefined ? e.tag : tag }
             : e,
         ),
       }));

@@ -10,22 +10,25 @@ import { ExpenseForm, type ExpenseFormSubmit } from "./ExpenseForm";
 
 interface Composer {
   /** Opens the add dialog, or the edit dialog when given an expense. */
-  open: (expense?: Expense) => void;
+  open: (expense?: Expense, defaults?: { tagId?: number }) => void;
 }
 
 const ComposerContext = createContext<Composer | null>(null);
 
 /** One add/edit expense dialog shared by the whole app (sidebar, pages, rows). */
 export function ExpenseComposerProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<{ open: boolean; expense?: Expense; key: number }>({ open: false, key: 0 });
+  const [state, setState] = useState<{ open: boolean; expense?: Expense; tagId?: number; key: number }>({ open: false, key: 0 });
   const create = useCreateExpense();
   const update = useUpdateExpense();
   const toast = useToast();
 
-  const open = useCallback((expense?: Expense) => setState((s) => ({ open: true, expense, key: s.key + 1 })), []);
+  const open = useCallback(
+    (expense?: Expense, defaults?: { tagId?: number }) => setState((s) => ({ open: true, expense, tagId: defaults?.tagId, key: s.key + 1 })),
+    [],
+  );
   const close = () => setState((s) => ({ ...s, open: false }));
 
-  async function handleSubmit({ input, category }: ExpenseFormSubmit) {
+  async function handleSubmit({ input, category, tag }: ExpenseFormSubmit) {
     const editing = state.expense;
     if (!editing) {
       await create.mutateAsync(input); // errors surface inside the form
@@ -36,7 +39,7 @@ export function ExpenseComposerProvider({ children }: { children: ReactNode }) {
     // Optimistic edit: close now, the row updates immediately and shows a pending state.
     close();
     update.mutate(
-      { id: editing.id, input, category },
+      { id: editing.id, input, category, tag },
       {
         onError: (err) =>
           toast.error("Changes weren't saved", {
@@ -57,6 +60,7 @@ export function ExpenseComposerProvider({ children }: { children: ReactNode }) {
         <ExpenseForm
           key={state.key}
           expense={state.expense}
+          defaultTagId={state.tagId}
           onSubmit={handleSubmit}
           onCancel={close}
           submitLabel={editing ? "Save changes" : "Add expense"}

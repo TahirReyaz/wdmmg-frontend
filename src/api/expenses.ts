@@ -7,6 +7,7 @@ export type ExpenseQuery = {
   categoryId?: number | "";
   paymentMethod?: PaymentMethod | "";
   q?: string;
+  tagId?: number | "";
   page?: number;
   size?: number;
   sort?: "date" | "amount" | "name";
@@ -19,7 +20,7 @@ export const expensesApi = {
   update: (id: number, input: ExpenseInput) => http.put<Expense>(`/api/expenses/${id}`, input),
   remove: (id: number) => http.delete(`/api/expenses/${id}`),
   exportCsv: (query: ExpenseQuery) => {
-    const { from, to, categoryId, paymentMethod, q } = query;
-    return downloadFile("/api/expenses/export", { from, to, categoryId, paymentMethod, q }, `expenses_${from ?? "all"}_${to ?? "today"}.csv`);
+    const { from, to, categoryId, paymentMethod, q, tagId } = query;
+    return downloadFile("/api/expenses/export", { from, to, categoryId, paymentMethod, q, tagId }, `expenses_${from ?? "all"}_${to ?? "today"}.csv`);
   },
 };

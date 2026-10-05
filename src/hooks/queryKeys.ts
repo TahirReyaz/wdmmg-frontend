@@ -7,6 +7,11 @@ export const qk = {
     active: ["categories", "active"] as const,
     admin: ["categories", "admin"] as const,
   },
+  tags: {
+    all: ["tags"] as const,
+    list: ["tags", "list"] as const,
+    summary: (id: number) => ["tags", id, "summary"] as const,
+  },
   expenses: {
     all: ["expenses"] as const,
     list: (q: ExpenseQuery) => ["expenses", "list", q] as const,

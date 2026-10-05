@@ -61,6 +61,8 @@ export interface Expense {
   category: Category;
   paymentMethod: PaymentMethod;
   notes: string | null;
+  /** Optional cross-category label such as a trip. */
+  tag: TagRef | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -72,6 +74,45 @@ export interface ExpenseInput {
   categoryId: number;
   paymentMethod: PaymentMethod;
   notes?: string;
+  /** null = untagged. */
+  tagId: number | null;
+}
+
+// ---------- tags: group expenses across categories (a trip, a wedding …) ----------
+export interface TagRef {
+  id: number;
+  name: string;
+  color: string;
+}
+
+export interface Tag extends TagRef {
+  expenseCount: number;
+  total: number;
+  /** null until the tag has expenses */
+  firstDate: string | null;
+  lastDate: string | null;
+  createdAt: string;
+}
+
+export interface TagInput {
+  name: string;
+  color?: string;
+}
+
+export interface TagSlice {
+  name: string;
+  color: string | null;
+  count: number;
+  total: number;
+}
+
+export interface TagSummary {
+  tag: Tag;
+  /** first to last expense date, inclusive */
+  days: number;
+  perDay: number;
+  byCategory: TagSlice[];
+  byPaymentMethod: TagSlice[];
 }
 
 export interface Page<T> {

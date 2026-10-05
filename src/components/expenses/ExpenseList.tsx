@@ -4,6 +4,7 @@ import type { Expense } from "@/types";
 import { formatDate, paymentMethodLabel } from "@/utils/format";
 import { cx } from "@/utils/cx";
 import { CategoryLabel } from "../common/CategoryLabel";
+import { TagChip } from "../tags/TagChip";
 import { Menu } from "../ui/Menu";
 import { Money } from "../ui/Money";
 import { LoadingRegion, SkeletonList, SkeletonTableRows, type SkeletonColumn } from "../ui/Skeleton";
@@ -80,7 +81,12 @@ export function ExpenseList({ expenses, loading, pendingIds, onEdit, onDelete, s
                       >
                         {e.name}
                       </button>
-                      {e.notes && <p className="truncate text-sm text-fg-3">{e.notes}</p>}
+                      {(e.tag || e.notes) && (
+                        <p className="mt-0.5 flex min-w-0 items-center gap-2 text-sm text-fg-3">
+                          {e.tag && <TagChip tag={e.tag} className="shrink-0" />}
+                          {e.notes && <span className="truncate">{e.notes}</span>}
+                        </p>
+                      )}
                     </TD>
                     <TD className="max-w-0 text-fg-2">
                       <CategoryLabel name={e.category.name} color={e.category.color} retired={!e.category.active} />
@@ -123,6 +129,7 @@ export function ExpenseList({ expenses, loading, pendingIds, onEdit, onDelete, s
                         {e.category.name} · {formatDate(e.date)}
                       </span>
                     </span>
+                    {e.tag && <TagChip tag={e.tag} className="mt-1" />}
                   </span>
                   <Money value={e.amount} className="text-base font-medium" />
                 </button>
