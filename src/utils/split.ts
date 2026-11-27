@@ -57,3 +57,37 @@ export function splitProblem(total: number, type: SplitType, rows: SplitRow[]): 
   if (type === "SHARES" && sum === 0) return "Give at least one person a share.";
   return null;
 }
+
+/**
+ * Recovers the share counts of a saved SHARES split from its amounts (the server stores only
+ * amounts). Finds the smallest whole-number counts that split the total into exactly the saved
+ * amounts, e.g. 300 / 150 / 150 → 2 / 1 / 1. Fractional counts come back scaled up to
+ * whole numbers (1.5 / 1 → 3 / 2), which splits the same way. If nothing small fits, the amounts
+ * themselves are used as the counts, which also reproduces the split exactly.
+ */
+export function sharesFromAmounts(total: number, amounts: number[], maxTotalShares = 500): number[] {
+  const cents = amounts.map((a) => Math.round(a * 100));
+  const totalCents = Math.round(total * 100);
+  if (cents.length === 0 || totalCents <= 0 || cents.some((c) => c <= 0)) return amounts.map(() => 1);
+  for (let sum = cents.length; sum <= maxTotalShares; sum++) {
+    const counts = cents.map((c) => Math.round((c * sum) / totalCents));
+    if (counts.some((n) => n < 1) || counts.reduce((s, n) => s + n, 0) !== sum) continue;
+    // Largest-remainder rounding leaves every share less than one cent from its exact value…
+    if (!counts.every((n, i) => Math.abs(cents[i] - (totalCents * n) / sum) < 1)) continue;
+    // …and the counts must give back exactly the saved amounts.
+    const again = previewSplit(total, "SHARES", counts.map((n, i) => ({ userId: i, included: true, value: String(n) })));
+    if (cents.every((c, i) => Math.round((again.get(i) ?? 0) * 100) === c)) return counts;
+  }
+  return cents.map((c) => c / 100);
+}
+
+/** Percentages of a saved PERCENT split, rounded to 2 decimals and adjusted to add up to exactly 100. */
+export function percentsFromAmounts(total: number, amounts: number[]): number[] {
+  if (amounts.length === 0 || total <= 0) return amounts.map(() => 0);
+  const exact = amounts.map((a) => (a / total) * 10000); // hundredths of a percent
+  const floors = exact.map(Math.floor);
+  let left = 10000 - floors.reduce((s, n) => s + n, 0);
+  const order = exact.map((e, i) => ({ i, frac: e - floors[i] })).sort((a, b) => b.frac - a.frac);
+  for (let k = 0; left > 0 && order.length; k = (k + 1) % order.length, left--) floors[order[k].i]++;
+  return floors.map((n) => n / 100);
+}

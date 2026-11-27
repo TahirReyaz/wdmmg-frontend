@@ -7,6 +7,7 @@ import { useCreateTag, useTags } from "@/hooks/useTags";
 import type { Category, Expense, ExpenseInput, PaymentMethod, TagRef } from "@/types";
 import { todayISO } from "@/utils/dates";
 import { PAYMENT_METHODS, currencySymbol } from "@/utils/format";
+import { saveShortcutLabel, submitOnEnter } from "@/utils/keyboard";
 import { Button } from "../ui/Button";
 import { AmountInput, Field, Input, Select, Textarea } from "../ui/Field";
 import { FormError } from "../ui/States";
@@ -133,7 +134,7 @@ export function ExpenseForm({
   }
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+    <form onSubmit={submit} onKeyDown={submitOnEnter} noValidate className="flex flex-col gap-4">
       <FormError message={formError} />
       <Field label="Description" error={show("name")}>
         <Input
@@ -239,11 +240,14 @@ export function ExpenseForm({
       <Field label="Notes" optional>
         <Textarea rows={2} maxLength={1000} value={values.notes} placeholder="Anything worth remembering" onChange={(e) => set("notes", e.target.value)} />
       </Field>
-      <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
+      <div className="sticky -bottom-5 z-10 -mx-5 mt-1 -mb-5 flex items-center gap-2 border-t border-line bg-raised px-5 pt-3 pb-5 *:flex-1 sm:justify-end sm:pt-4 sm:*:flex-none">
+        <span className="mr-auto hidden text-xs text-fg-3 sm:inline">
+          <kbd className="font-sans">{saveShortcutLabel()}</kbd> to save
+        </span>
         <Button onClick={onCancel} disabled={submitting}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" loading={submitting} loadingText="Saving…">
+        <Button type="submit" variant="primary" loading={submitting} loadingText="Saving…" title={`Save (${saveShortcutLabel()})`}>
           {submitLabel}
         </Button>
       </div>
